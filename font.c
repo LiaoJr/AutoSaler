@@ -3,6 +3,9 @@
 
 //arm-linux-gcc  test.c   -L./   -lfont   -lm 
 
+/*用于字体显示
+参数定义在font_t类型的结构体中
+再将其地址传入*/
 void showfont(font_t *myfont)
 {
 	// 打开字体

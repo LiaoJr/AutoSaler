@@ -271,3 +271,59 @@ void CListPrint(cman_t *manager)
     }
     printf("========================================================================================\n");
 }
+
+/*从商品文档中读取信息并将其添加到链表，完成后将链表返回*/
+man_t * ProductRead(char *fp)
+{
+    /*从商品信息文档中读取信息*/
+    FILE *f = fopen(fp, "r");
+    if(NULL == f){
+        perror("file fopen failed.");
+        return NULL;
+    }
+    else{
+        printf("file fopen success.\n");
+    }
+
+    /*创建一个商品新链表*/
+    man_t *pManager = ListCreat();
+
+    /*从商品信息文档中读取现有商品信息，并将*/
+    int R;
+    node_t *NodeRead = pManager->head;
+    while(1)
+    {
+        data_t DataTmp;
+        R = fscanf(f, "%s %u %s %u %u %u %u %f %u\n", 
+                DataTmp.fp,
+                &DataTmp.ID,
+                DataTmp.name,
+                &DataTmp.pos_x,
+                &DataTmp.pos_y,
+                &DataTmp.w,
+                &DataTmp.h,
+                &DataTmp.price,
+                &DataTmp.count);
+        
+        if(R == EOF){
+            printf("read finish\n");
+            break;
+        }
+
+        /*将读到的数据打印出来*/
+        printf("%u %s %u %u %u %u %f %u\n",
+                DataTmp.ID,
+                DataTmp.name,
+                DataTmp.pos_x,
+                DataTmp.pos_y,
+                DataTmp.w,
+                DataTmp.h,
+                DataTmp.price,
+                DataTmp.count);
+        
+        ListTailInsert(pManager, &DataTmp);
+    }
+
+    fclose(f);
+    return pManager;
+}

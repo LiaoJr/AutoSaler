@@ -65,41 +65,41 @@ man_t * ListCreat(void);
 /*创建新节点并根据data初始化*/
 node_t * ListCreatNode(data_t *data);
 
-
 /*根据数据data创建新节点后，尾插到链表manager中*/
 void ListTailInsert(man_t *manager, data_t *data);
-
 
 /*链表结点遍历打印相关数据*/
 void ListPrint(man_t *manager);
 
-
 /*根据商品编号查找商品结点*/
 node_t *ListFind(man_t *manager, unsigned int ID);
-
 
 /*根据商品ID删除商品结点*/
 void ListDelNode(man_t *manager, unsigned int ID);
 
-
+/*创建空购物车链表*/
 cman_t * CListCreat();
 
-
+/*购物车链表新增商品结点*/
 cnode_t * CListCreatNode(cdata_t *cdata);
 
-
+/*购物车链表结点尾插*/
 void CListTailInsert(cman_t *manager, cdata_t *cdata);
 
+/*购物车链表商品结点删除*/
 cnode_t * CListFind(cman_t *manager, unsigned int ID);
 
+/*购物车链表商品结点删除*/
 void CListDelNode(cman_t *manager, unsigned int ID);
 
 /*清空购物车链表结点*/
 void CListDestroy(cman_t *cmanager);
 
+/*购物车链表结点打印*/
 void CListPrint(cman_t *manager);
-    
 
+/*从商品文档中读取信息并将其添加到链表，完成后将链表返回*/
+man_t * ProductRead(char *fp);
 
 
 #endif

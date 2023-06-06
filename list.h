@@ -28,7 +28,7 @@ typedef struct Data
     unsigned int w;      //记录商品图片区域的宽度
     unsigned int h;      //记录商品图片区域的高度
     float price;         //记录商品价格
-    unsigned int count;        //记录商品数量
+    int count;        //记录商品数量
 }data_t;
 
 
@@ -111,6 +111,8 @@ void CListPrint(cman_t *manager);
 /*从商品文档中读取信息并将其添加到链表，完成后将链表返回*/
 man_t * ProductRead(char *fp);
 
+/*将商品数量写入文档中*/
+void ProductWrite(man_t *manager);
 
 #endif
 

@@ -96,11 +96,12 @@ void RunSaler()
                 }
                 else if(CHECKTOUCHPOS(tx, ty, 600, 0, 200, 40)){
                     printf("进入管理员模式\n");
-                    font_t fontmgr = {"尚未开发!", 100, 200, 150, 0xffffff, 400, 100, 0xae86fd, 500};
-                    showfont(&fontmgr);
-                    sleep(1);
-                    showmenu(pManager, mpage);
-                    // showmanager(pManager);
+                    // font_t fontmgr = {"尚未开发!", 100, 200, 150, 0xffffff, 400, 100, 0xae86fd, 500};
+                    // showfont(&fontmgr);
+                    // sleep(1);
+                    // showmenu(pManager, mpage);
+                    showproduct(pManager, pCart);
+
                     continue;
                 }
                 else{
@@ -184,18 +185,17 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-
-/*
-                    __   _,--="=--,_   __
-                    /  \."    .-.    "./  \
-                    /  ,/  _   : :   _  \/` \
-                    \  `| /o\  :_:  /o\ |\__/
-                    `-'| :="~` _ `~"=: |
-                        \`     (_)     `/ jgs
-                .-"-.   \      |      /   .-"-.
-------------------{     }--|  /,.-'-.,\  |--{     }---------------------
-                 (_)_)_)  \_/`~-===-~`\_/  (_(_(_)                     
-*/                                                                                                 
+    /*
+                        __   _,--="=--,_   __
+                        /  \."    .-.    "./  \
+                        /  ,/  _   : :   _  \/` \
+                        \  `| /o\  :_:  /o\ |\__/
+                        `-'| :="~` _ `~"=: |
+                            \`     (_)     `/ jgs
+                    .-"-.   \      |      /   .-"-.
+    ------------------{     }--|  /,.-'-.,\  |--{     }---------------------
+                    (_)_)_)  \_/`~-===-~`\_/  (_(_(_)                     
+    */                                                                                                 
     RunSaler();  //启动卡布达超级形态------> :)       !~
 
 

@@ -22,9 +22,6 @@
 /*进入菜单页面*/
 void showmenu(man_t *manager, int mpage);
 
-/*商品展示(管理员模式|未使用)*/
-void showproductlist(man_t *manager);
-
 /*按页码,展示购物车列表*/
 void showcartlist(cman_t *pcart, int cartpage);
 
@@ -43,6 +40,13 @@ void showcart(cman_t *pCartlist, man_t *manager);
 /*显示某商品已成功添加到购物车*/
 void showaddpd(char *pname, int count, man_t *manager);
 
+/*进入管理员补货界面*/
+void showproduct(man_t *manager, cman_t *cmanager);
 
+/*商品展示(管理员模式|未使用)*/
+void showproductlist(man_t *manager, int spage);
+
+
+char *getkey(man_t *manager);
 
 #endif

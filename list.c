@@ -87,37 +87,39 @@ node_t *ListFind(man_t *manager, unsigned int ID)
 /*根据商品ID删除商品结点*/
 void ListDelNode(man_t *manager, unsigned int ID)
 {
-    int i = 0;
     node_t *NodeDel = manager->head;
-    while(NodeDel->pd.ID != ID){
-        NodeDel = NodeDel->next;
-        if(NULL == NodeDel){
-            printf("NodeDel not found.\n");
-            return ;
+    node_t *NodePrev = NULL;
+    while(NodeDel != NULL){
+        if(NodeDel->pd.ID == ID){
+            break;
         }
+        NodePrev = NodeDel;
+        NodeDel = NodeDel->next;
     }
-
-    /*如果要删除的结点是头结点*/
-    if(NodeDel == manager->head){
-        manager->head = NodeDel->next;
-        NodeDel->next = NULL;
+    if(NULL == NodeDel){
+        printf("NodeDel not found.\n");
+        return ;
     }
     else{
-        node_t *NodeDelPrev = manager->head;
-
-        /*循环找出要删除结点的前驱结点*/
-        while(NodeDelPrev->next != NodeDel){
-            NodeDelPrev = NodeDelPrev->next;
+        /*如果要删除的结点是头结点*/
+        if(NodeDel == manager->head){
+            manager->head = NodeDel->next;
+            NodeDel->next = NULL;
         }
-        NodeDelPrev->next = NodeDel->next;
-        NodeDel->next = NULL;
+        /*如果要删除的加点是尾结点*/
+        else if(NodeDel == manager->tail){
+            NodePrev->next = NodeDel->next;
+            manager->tail = NodePrev;
+        }
+        /*如果要删除的结点不是中间结点*/
+        else{
+            NodePrev->next = NodeDel->next;
+            NodeDel->next = NULL;
+        }
+        free(NodeDel);
+        manager->num--;
     }
-
-    free(NodeDel);
-    manager->num--;
 }
-
-
 
 
 void ListPrint(man_t *manager)
@@ -125,7 +127,7 @@ void ListPrint(man_t *manager)
     node_t *NodePrint = manager->head;
     printf("=======================================product info=====================================\n");
     while(NodePrint != NULL){
-        printf("fp:%s ID:%u, product name:%s, price:%f, count:%u\n",
+        printf("fp:%s ID:%u, product name:%s, price:%f, count:%d\n",
         NodePrint->pd.fp,
         NodePrint->pd.ID, 
         NodePrint->pd.name, 
@@ -327,3 +329,36 @@ man_t * ProductRead(char *fp)
     fclose(f);
     return pManager;
 }
+
+
+/*将商品数量写入文档中*/
+void ProductWrite(man_t *manager)
+{
+
+    /*往商品信息文档中写入商品信息*/
+    char fp[256] = "product.txt";
+    FILE *f = fopen(fp, "w+");
+    if(NULL == f){
+        perror("file fopen failed.");
+        return ;
+    }
+
+    node_t *NodeWrite = manager->head;
+    while(NodeWrite != NULL){
+        fprintf(f, "%s %u %s %u %u %u %u %f %u\n",
+            NodeWrite->pd.fp,
+            NodeWrite->pd.ID,
+            NodeWrite->pd.name,
+            NodeWrite->pd.pos_x,
+            NodeWrite->pd.pos_y,
+            NodeWrite->pd.w,
+            NodeWrite->pd.h,
+            NodeWrite->pd.price,
+            NodeWrite->pd.count);
+
+        NodeWrite = NodeWrite->next;
+    }
+
+    fclose(f);
+}
+

@@ -88,7 +88,7 @@ void showmenu(man_t *manager, int mpage)
         }
 
         font_t pfont = {"", 30, pdis->pd.pos_x+75, pdis->pd.pos_y, 0x1034a2, 125, 125, 0xffffff, 125};
-        sprintf(pfont.content, "名称:%s\n价格:%.1f元\n数量:%u", pdis->pd.name, pdis->pd.price, pdis->pd.count);
+        sprintf(pfont.content, "名称:%s\n价格:%.1f元\n数量:%d", pdis->pd.name, pdis->pd.price, pdis->pd.count);
         showfont(&pfont);
         pdis = pdis->next;
         numdis++;
@@ -114,48 +114,6 @@ void showmenu(man_t *manager, int mpage)
 
 }
 
-void showproductlist(man_t *manager)
-{
-    /*展示购物车信息(后面加上"+"和"-"按钮)*/
-    node_t *NodeShow = manager->head;
-    font_t plusf, minorsf;
-    int stepposy = 0;
-    while(NodeShow != NULL){
-        font_t buyfont = {"", 50, 200, 100+stepposy, 0xffffff, 500, 50, 0x115599, 500};
-        strcpy(buyfont.content, NodeShow->pd.name);
-        showfont(&buyfont);
-
-        font_t countf = {"", 50, 380, 100+stepposy, 0xffffff, 250, 50, 0x115599, 250};
-        sprintf(countf.content, "货存数量: %u", NodeShow->pd.count);
-        showfont(&countf);
-
-        strcpy(plusf.content, " +");
-        plusf.size = 50;
-        plusf.pos_x = 600;
-        plusf.pos_y = 108+stepposy;
-        plusf.fcolor = 0xffee66;
-        plusf.bgw = 40;
-        plusf.bgh = 40;
-        plusf.bgcolor = 0x44ee22;
-        plusf.linew = 50;
-        showfont(&plusf);
-
-        strcpy(minorsf.content, " -");
-        minorsf.size = 50;
-        minorsf.pos_x = 650;
-        minorsf.pos_y = 108+stepposy;
-        minorsf.fcolor = 0xffee66;
-        minorsf.bgw = 40;
-        minorsf.bgh = 40;
-        minorsf.bgcolor = 0x44ee22;
-        minorsf.linew = 50;
-        showfont(&minorsf);
-
-        stepposy += 50;
-        NodeShow = NodeShow->next;
-    }
-
-}
 
 /*展示购物车信息*/
 void showcartlist(cman_t *pcart, int cartpage)
@@ -590,9 +548,93 @@ void showaddpd(char *pname, int count, man_t *manager)
 }
 
 
-void showmanager(man_t *manager)
+void showproductlist(man_t *manager, int manpage)
 {
+    /*展示购物车信息(后面加上"+"和"-"按钮)*/
+    node_t *NodeShow = manager->head;
+    
+    /*找该页的第一个*/
+    for(int i = 0;i<(manpage-1)*6;i++){
+        NodeShow = NodeShow->next;
+    }
+
+    //----->这时CNodeShow是该页的第一项
+
+    font_t plusf, minorsf;
+    int stepposy = 0;
+    int pagelimit = 0;
+    while(NodeShow != NULL){
+        font_t buyfont = {"", 50, 200, 100+stepposy, 0xffffff, 500, 50, 0x115599, 500};
+        strcpy(buyfont.content, NodeShow->pd.name);
+        showfont(&buyfont);
+
+        font_t countf = {"", 50, 380, 100+stepposy, 0xffffff, 250, 50, 0x115599, 250};
+        sprintf(countf.content, "货存数量: %d", NodeShow->pd.count);
+        showfont(&countf);
+
+        strcpy(plusf.content, " +");
+        plusf.size = 50;
+        plusf.pos_x = 600;
+        plusf.pos_y = 108+stepposy;
+        plusf.fcolor = 0xffee66;
+        plusf.bgw = 40;
+        plusf.bgh = 40;
+        plusf.bgcolor = 0x44ee22;
+        plusf.linew = 50;
+        showfont(&plusf);
+
+        strcpy(minorsf.content, " -");
+        minorsf.size = 50;
+        minorsf.pos_x = 650;
+        minorsf.pos_y = 108+stepposy;
+        minorsf.fcolor = 0xffee66;
+        minorsf.bgw = 40;
+        minorsf.bgh = 40;
+        minorsf.bgcolor = 0x44ee22;
+        minorsf.linew = 50;
+        showfont(&minorsf);
+
+        stepposy += 50;
+        NodeShow = NodeShow->next;
+        pagelimit++;
+        if(pagelimit==6){  //一页最多只能显示6项
+            break;
+        }
+    }
+
+    font_t font3 = {"", 50, 0, 430, 0xffffff, 120, 50, 0x86fcfd, 150};
+    sprintf(font3.content,  "第%d页", manpage);
+    showfont(&font3);
+
+}
+
+
+/*进入管理员补货界面*/
+void showproduct(man_t *manager, cman_t *cmanager)
+{
+    char mankey[128] = "123456";  //初始管理员密码
+    char *keyget = getkey(manager);  //等待密码输入结果
+    if(NULL == keyget || strcmp(mankey, keyget) != 0){
+        if(keyget != NULL){
+            printf("keyget = %s\n", keyget);
+        }
+        printf("已取消或密码错误\n");
+        showmenu(manager, mpage);
+        return ;
+    }
+    else{
+        font_t fontyes = {"已获得管理员权限", 50, 210, 180, 0xffffff, 380, 50, 0x00ff00, 400};
+        showfont(&fontyes);
+        printf("获得管理员权限\n");
+        sleep(1);
+    }
+
+
+
+    //---------------------------->已获得管理员权限
     unsigned int tx,ty;
+    int ret; //用于接受触屏检测返回值
+    int spage = 1;
     bool flagconti = false;
     while(1)
     {
@@ -600,17 +642,277 @@ void showmanager(man_t *manager)
         imginfo_t background = {"background.jpeg", 0, 0};
         showjpg(&background);
 
+        /*显示返回按钮*/
+        font_t fontback = {"<返回", 80, 0, 0, 0xffffff, 150, 80, 0x0000cc, 240};
+        showfont(&fontback);
+
         /*显示管理员模式*/
         font_t font2 = {"管理员模式", 40, 600, 0, 0xffff00, 200, 40, 0xae86fc, 200};
         showfont(&font2);
 
-        char fp[256] = "product.txt";
-        manager = ProductRead(fp);
+        /*显示确认补仓按钮*/
+        font_t fontgo = {"确认补仓", 50, 200, 430, 0xffffff, 200, 50, 0xae86fc, 200};
+        showfont(&fontgo);
+
+        /*显示放弃补仓按钮*/
+        font_t fontqu = {"放弃补仓", 50, 400, 430, 0xffffff, 200, 50, 0xff0000, 200};
+        showfont(&fontqu);
 
         /*显示商品货存列表*/
-        showproductlist(manager);
+        showproductlist(manager, spage);
 
+        ret = touchpanel(&tx, &ty);  //等待触屏事件
+
+        if(ret == 0){  //如果是屏幕点击
+            node_t *nodetemp = manager->head;
+            cnode_t *cnodetemp = cmanager->head;
+            /*找到该页的第一项*/
+            for(int i=0;i<(spage-1)*6;i++){
+                nodetemp = nodetemp->next;
+            }
+
+            int steplist = 0;  //商品列表项步长
+            int pagelm = 0;
+            man_t *manrec = ListCreat();  //创建一个空商品链表用于记录管理员的商品增补操作
+            while(nodetemp != NULL){
+
+                /*如果点击到了加号*/
+                if(CHECKTOUCHPOS(tx,ty,600,108+steplist,40,40)){
+                    nodetemp->pd.count++;
+                    printf("%s 商品数量加1后: %d\n", nodetemp->pd.name, nodetemp->pd.count);
+
+                    node_t *nodefind = ListFind(manrec, nodetemp->pd.ID);  //查找记录链表中是否有该商品结点
+                    if(NULL == nodefind){
+                        data_t datatemp = {
+                            "", nodetemp->pd.ID, "", nodetemp->pd.pos_x, nodetemp->pd.pos_y,
+                            nodetemp->pd.w, nodetemp->pd.h, nodetemp->pd.price, 1
+                        };
+                        ListTailInsert(manrec, &datatemp);
+                    }
+                    else{
+                        nodefind->pd.count++;
+                    }
+
+                    break;
+                }
+                /*如果点击到了减号*/
+                else if(CHECKTOUCHPOS(tx,ty,650,108+steplist,40,40)){
+
+                    /*如果商品数量为0,则不能再减*/
+                    if(nodetemp->pd.count == 0){
+                        printf("商品数量已为0,不能再减了\n");
+                        font_t fontns = {"商品数量为0\n无法减小", 30, 650, 108+steplist, 0xffffff, 160, 60, 0xff0000, 180};
+                        showfont(&fontns);
+                        break;
+                    }
+
+                    nodetemp->pd.count--;
+                    printf("%s 商品数量减1后: %u\n", nodetemp->pd.name, nodetemp->pd.count);
+
+                    node_t *nodefind = ListFind(manrec, nodetemp->pd.ID);  //查找记录链表中是否有该商品结点
+                    if(NULL == nodefind){
+                        data_t datatemp = {
+                            "", nodetemp->pd.ID, "", nodetemp->pd.pos_x, nodetemp->pd.pos_y,
+                            nodetemp->pd.w, nodetemp->pd.h, nodetemp->pd.price, -1
+                        };
+                        ListTailInsert(manrec, &datatemp);
+                    }
+                    else{
+                        nodefind->pd.count--;
+                    }
+
+                    break;
+                }
+                else{
+                    steplist += 50;
+                    nodetemp = nodetemp->next;
+                    pagelm++;
+                    if(pagelm == 6){
+                        break;
+                    }
+                }
+            }
+
+            /*如果商品数量减到0, 则删除该商品结点*/
+            // if(nodetemp != NULL && nodetemp->pd.count == 0){
+            //     ListDelNode(manager, nodetemp->pd.ID);
+            // }
+
+
+//  <---大while
+            /*如果点击确认补仓*/
+            if((CHECKTOUCHPOS(tx,ty,fontgo.pos_x,fontgo.pos_y,fontgo.bgw,fontgo.bgh))){  //如果购物车为空
+
+                /*将商品链表重新写入商品信息文档*/
+                ProductWrite(manager);
+
+                font_t fontcf = {"补仓完成", 100, 100, 100, 0xffffff, 400, 100, 0x0000ff, 400};
+                showfont(&fontcf);
+
+                sleep(1);
+                showmenu(manager, mpage);
+                break;
+            }
+            /*如果点击放弃补仓*/
+            else if((CHECKTOUCHPOS(tx,ty,fontqu.pos_x,fontqu.pos_y,fontqu.bgw,fontqu.bgh))){
+
+                font_t fontcf = {"确认放弃补仓?\n(将会清空之前增补记录)", 40, 200, 100, 0xffffff, 400, 150, 0xff0000, 400};
+                showfont(&fontcf);
+                font_t font1 = {"取消", 50, 200, 200, 0xffffff, 80, 50, 0x0000ff, 100};
+                showfont(&font1);
+                font_t font2 = {"确认", 50, 520, 200, 0xffffff, 80, 50, 0xee3380, 100};
+                showfont(&font2);
+                int tx1, ty1;
+                while(1){
+                    touchpanel(&tx1, &ty1);
+                    /*如果点击取消*/
+                    if(CHECKTOUCHPOS(tx1,ty1,200, 200, 80, 50)){
+                        flagconti = true;
+                        break;
+                    }
+                    /*如果点击确认*/
+                    if(CHECKTOUCHPOS(tx1, ty1, 520, 200, 80, 50)){
+                        
+                        /*将manrec中记录的操作还回manager*/
+                        node_t *noderetn = manrec->head;
+                        while(noderetn != NULL)
+                        {
+                            /*找到对应的商品结点*/
+                            nodetemp = ListFind(manager, noderetn->pd.ID);
+
+                            /*将对应结点的操作还回去*/
+                            nodetemp->pd.count += noderetn->pd.count;
+                        }
+                        
+                        showmenu(manager, mpage);
+                        return ;
+                    }
+                }
+            }
+            /*如果点击了返回*/
+            else if(CHECKTOUCHPOS(tx,ty,fontback.pos_x,fontback.pos_y,fontback.bgw,fontback.bgw)){
+                printf("-----返回主页面-----\n");
+                showmenu(manager, mpage);
+                return ;
+            }
+            else{
+                // printf(">>>>>>>>>>>>>>>>>>>>无效点击\n");
+            }
+
+            if(flagconti){
+                flagconti = false;
+                continue;
+            }
+        }
+
+        /*如果是上滑*/
+        if(ret == 1){
+            printf("存货列表上滑\n");
+            if((spage == (manager->num)/6) && (manager->num)%6==0){
+                printf("已在最后一页\n");
+                /*提示用户已经在最后一页啦*/
+                font_t fontbot = {"已经在最后一页啦!", 80, 100, 0, 0xffffff, 600, 80, 0x998800, 600};
+                showfont(&fontbot);
+                continue;
+            }
+            else if(spage == (manager->num)/6 + 1){
+                printf("-已在最后一页-\n");
+                /*提示用户已经在最后一页啦*/
+                font_t fontbot = {"已经在最后一页啦!", 80, 100, 0, 0xffffff, 600, 80, 0x998800, 600};
+                showfont(&fontbot);
+                continue;
+            }
+            else{
+                printf("product下一页\n");
+                spage++;
+            }
+
+        }
+
+        /*如果是下滑*/
+        if(ret == 2){
+            printf("存货列表下滑\n");
+            if(spage>1){
+                printf("cart上一页\n");
+                spage--;
+            }
+            else{
+                /*提示用户已经在第一页啦*/
+                font_t fontbot = {"已经在第一页啦!", 80, 100, 0, 0xffffff, 600, 80, 0x998800, 600};
+                showfont(&fontbot);
+                continue;
+            }
+
+        }
+    }
+}
+
+
+
+char *getkey(man_t *manager)
+{
+    char *key = (char *)calloc(64, sizeof(char));
+    if(NULL == key){
+        perror("key calloc failed.");
+        return NULL;
+    }
+
+    font_t please = {"请输入密码", 100, 150, 260, 0xffffff, 480, 100, 0x00ffff, 500};
+    showfont(&please);
+
+    /*显示数字键盘*/
+    int step = 0;
+    for(int i=0;i<10;i++)
+    {
+        font_t fontnum = {"", 50, 150+step, 360, 0xffffff, 50, 50, 0x00ff00, 500};
+        sprintf(fontnum.content, "%d", step/50);
+        showfont(&fontnum);
+        step += 50;
+    }
+    /*显示确认按钮*/
+    font_t fontcf = {"确认", 60, 640, 410, 0xffffff, 110, 60, 0x0000ff, 120};
+    showfont(&fontcf);
+
+    /*显示取消按钮*/
+    font_t fontqu = {"取消", 60, 520, 410, 0xffffff, 110, 60, 0xa8147e, 120};
+    showfont(&fontqu);
+
+    int tx, ty;
+    int count = 0;
+    while(1)
+    {
         touchpanel(&tx, &ty);
+        step = 0;
+        bool keyflag = true;
+        while(keyflag)
+        {
+            if(CHECKTOUCHPOS(tx, ty, 150+step, 360, 50, 50)){
+                printf("点到数字%d\n", step/50);
+                *(key+count) = step/50 + 48;
+                count++;  //点到数字count就加一
+                printf("count = %d\n", count);
+                break;
+            }
+            step += 50;
+            if(count == 6 || step > 600){
+                keyflag = false;
+            }
+        }
 
+        
+        /*如果点到确认按钮*/
+        if(CHECKTOUCHPOS(tx, ty, 640, 410, 110, 60)){
+            printf("confirm\n");
+            return key;
+        }
+        /*如果点到取消按钮*/
+        else if(CHECKTOUCHPOS(tx, ty, 520, 410, 110, 60)){
+            printf("quit\n");
+            showmenu(manager, mpage);
+            return NULL;
+        }
+        else{
+            // printf("invalid input\n");
+        }
     }
 }

@@ -1,5 +1,6 @@
 
 /*
+未打包库前编译命令
 arm-linux-gcc main.c list.c showjpg.c touch.c font.c saler.c -L./lib -ljpeg -lfont -lm -o main
 */
 

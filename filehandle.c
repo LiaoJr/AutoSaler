@@ -1,3 +1,5 @@
+/*该文件仅用于写入和读取product.txt文档中的商品信息*/
+
 
 #include <stdio.h>
 #include "list.h"

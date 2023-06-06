@@ -27,17 +27,8 @@ unsigned int *origincount;
 int mpage = 1;
 
 
-
-int main(int argc, char *argv[])
+void RunSaler()
 {
-    /*LCD初始化*/
-    int iret = lcd_init();
-    if(iret != 0){
-        perror("LCD init failed.");
-        return -1;
-    }
-
-
     /*从商品信息文档中读取现有商品信息，并将*/
     char fp[256] = "product.txt";
     man_t *pManager = ProductRead(fp);
@@ -60,7 +51,7 @@ int main(int argc, char *argv[])
 
     int tx,ty;
     int ReTouch;
-    while (1)
+    while(1)
     {
         ListPrint(pManager);
         CListPrint(pCart);
@@ -180,6 +171,33 @@ int main(int argc, char *argv[])
             showmenu(pManager, mpage);
         }
     }
+}
+
+
+
+int main(int argc, char *argv[])
+{
+    /*LCD初始化*/
+    int iret = lcd_init();
+    if(iret != 0){
+        perror("LCD init failed.");
+        return -1;
+    }
+
+
+/*
+                    __   _,--="=--,_   __
+                    /  \."    .-.    "./  \
+                    /  ,/  _   : :   _  \/` \
+                    \  `| /o\  :_:  /o\ |\__/
+                    `-'| :="~` _ `~"=: |
+                        \`     (_)     `/ jgs
+                .-"-.   \      |      /   .-"-.
+------------------{     }--|  /,.-'-.,\  |--{     }---------------------
+                 (_)_)_)  \_/`~-===-~`\_/  (_(_(_)                     
+*/                                                                                                 
+    RunSaler();  //启动卡布达超级形态------> :)       !~
+
 
     /*释放LCD映射的内存*/
     int munmret = munmap(lcd, 800 * 480 * 4);

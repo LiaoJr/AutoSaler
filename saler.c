@@ -504,6 +504,7 @@ int showpay(cman_t *cmanager, man_t *manager)
 }
 
 
+/*显示支付界面商品列表*/
 float showpaylist(cman_t *cmanager, int paypage)
 {
     printf("paypage = %d\n", paypage);
@@ -554,7 +555,6 @@ float showpaylist(cman_t *cmanager, int paypage)
     sprintf(font3.content,  "第%d页", paypage);
     showfont(&font3);
 
-
     return sum;
 }
 
@@ -582,8 +582,6 @@ void showproduct(man_t *manager, cman_t *cmanager)
         printf("获得管理员权限\n");
         sleep(1);
     }
-
-
 
     //---------------------------->已获得管理员权限
     unsigned int tx,ty;

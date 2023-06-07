@@ -55,7 +55,6 @@ void RunSaler()
     {
         ListPrint(pManager);
         CListPrint(pCart);
-        // int mpage = 1;
         ReTouch = touchpanel(&tx, &ty);  //等待触屏事件，检测到才往下响应
 
         //检测到触屏事件
@@ -197,7 +196,6 @@ int main(int argc, char *argv[])
                     (_)_)_)  \_/`~-===-~`\_/  (_(_(_)                     
     */                                                                                                 
     RunSaler();  //启动卡布达超级形态------> :)       !~
-
 
     /*释放LCD映射的内存*/
     int munmret = munmap(lcd, 800 * 480 * 4);

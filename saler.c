@@ -392,6 +392,9 @@ void showcart(cman_t *pCartlist, man_t *manager)
         imginfo_t background = {"background.jpeg", 0, 0};
         showjpg(&background);
 
+        font_t fontcart = {"购物车", 100, 280, 0, 0xffffff, 250, 100, 0x1166cc, 300};
+        showfont(&fontcart);
+
         /*显示返回和结算按钮*/
         font_t fontback = {"<返回", 80, 0, 0, 0xffffff, 150, 80, 0x0000cc, 240};
         showfont(&fontback);

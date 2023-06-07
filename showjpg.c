@@ -13,7 +13,6 @@
 #include "showjpg.h"
 
 
-
 extern unsigned char *image_buffer; /* Points to large array of R,G,B-order data */
 extern int image_height;      /* Number of rows in image */
 extern int image_width;       /* Number of columns in image */

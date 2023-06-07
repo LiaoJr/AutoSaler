@@ -360,5 +360,6 @@ void ProductWrite(man_t *manager)
     }
 
     fclose(f);
+    printf("==========>商品信息已写入文档\n");
 }
 

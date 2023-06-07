@@ -286,12 +286,13 @@ int showpay(cman_t *cmanager, man_t *manager)
             else if(CHECKTOUCHPOS(tx, ty, 300, 400, 250, 80)){
                 printf("正在结算\n");
                 font_t fontfinish = {"", 80, 50, 100, 0xffffff, 450, 300, 0x11eecc, 450};
-                sprintf(fontfinish.content, "已成功支付:\n%.2f元\n欢迎再次光临\n       !== :)  ==!", sum);
+                sprintf(fontfinish.content, "已成功支付:\n%.1f元\n欢迎再次光临\n       !== :)  ==!", sum);
                 showfont(&fontfinish);
                 sleep(1);
 
                 /*清空购物车链表结点*/
                 CListDestroy(cmanager);
+                ProductWrite(manager);  //结算完成后将商品信息写入文档
 
                 printf("结算完成\n");
                 break;
@@ -326,6 +327,7 @@ int showpay(cman_t *cmanager, man_t *manager)
                         }
                         /*清空商品链表*/
                         CListDestroy(cmanager);
+
                         
                         flagconti = false;
                         break;
@@ -339,7 +341,7 @@ int showpay(cman_t *cmanager, man_t *manager)
             }
         }
 
-        if(ret == 1){  //如果是在屏幕上滑
+        if(ret == 1 || ret == 3){  //如果是在屏幕上滑
             printf("pay列表上滑\n");
             if((ppage == (cmanager->num)/6) && (cmanager->num)%6==0){
                 printf("购物车已在最后一页\n");
@@ -361,7 +363,7 @@ int showpay(cman_t *cmanager, man_t *manager)
             }
         }
 
-        if(ret == 2){  //如果是在屏幕下滑
+        if(ret == 2 || ret == 4){  //如果是在屏幕下滑
             printf("pay列表下滑\n");
             if(ppage>1){
                 printf("paylist上一页\n");
@@ -494,7 +496,7 @@ void showcart(cman_t *pCartlist, man_t *manager)
             }
         }
 
-        if(ret == 1){  //如果是在屏幕上滑
+        if(ret == 1 || ret == 3){  //如果是在屏幕上滑
             printf("购物车列表上滑\n");
             if((cpage == (pCartlist->num)/6) && (pCartlist->num)%6==0){
                 printf("购物车已在最后一页\n");
@@ -516,7 +518,7 @@ void showcart(cman_t *pCartlist, man_t *manager)
             }
         }
 
-        if(ret == 2){  //如果是在屏幕下滑
+        if(ret == 2 || ret == 4){  //如果是在屏幕下滑
             printf("购物车链表下滑\n");
             if(cpage>1){
                 printf("cart上一页\n");
@@ -619,6 +621,9 @@ void showproduct(man_t *manager, cman_t *cmanager)
             printf("keyget = %s\n", keyget);
         }
         printf("已取消或密码错误\n");
+        font_t fontno = {"密码错误或已取消", 50, 210, 150, 0xffffff, 380, 50, 0xff0000, 800};
+        showfont(&fontno);
+        sleep(1);
         showmenu(manager, mpage);
         return ;
     }
@@ -806,7 +811,7 @@ void showproduct(man_t *manager, cman_t *cmanager)
         }
 
         /*如果是上滑*/
-        if(ret == 1){
+        if(ret == 1 || ret == 3){
             printf("存货列表上滑\n");
             if((spage == (manager->num)/6) && (manager->num)%6==0){
                 printf("已在最后一页\n");
@@ -830,7 +835,7 @@ void showproduct(man_t *manager, cman_t *cmanager)
         }
 
         /*如果是下滑*/
-        if(ret == 2){
+        if(ret == 2 || ret == 4){
             printf("存货列表下滑\n");
             if(spage>1){
                 printf("cart上一页\n");
@@ -890,7 +895,10 @@ char *getkey(man_t *manager)
                 printf("点到数字%d\n", step/50);
                 *(key+count) = step/50 + 48;
                 count++;  //点到数字count就加一
-                printf("count = %d\n", count);
+                // printf("count = %d\n", count);
+                font_t fontnum = {"", 100, 360, 150, 0xffffff, 80, 100, 0x298640, 100};
+                sprintf(fontnum.content, "%d", step/50);
+                showfont(&fontnum);
                 break;
             }
             step += 50;

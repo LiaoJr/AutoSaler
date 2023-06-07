@@ -63,13 +63,21 @@ int touchpanel(int *tx, int *ty)
         printf(">>>>>>>>>>  touch   >>>>>>>>>>\n");
         ret = 0;
     }
-    if(ly > *ty || lx > *tx){
+    if(ly > *ty && (lx-*tx)>-80 && (lx-*tx)<80){
         printf(">>>>>>>>>>slide down>>>>>>>>>>\n");
         ret = 2;
     }
-    if(ly < *ty || lx < *tx){
+    if(ly < *ty && (lx-*tx)>-80 && (lx-*tx)<80){
         printf(">>>>>>>>>>slide  up >>>>>>>>>>\n");
         ret = 1;
+    }
+    if(lx < *tx && (ly-*ty)>-80 && (ly-*ty)<80){
+        printf(">>>>>>>>>>slide left>>>>>>>>>>\n");
+        ret = 3;
+    }
+    if(lx > *tx && (ly-*ty)>-80 && (ly-*ty)<80){
+        printf(">>>>>>>>>>slide right>>>>>>>>>>\n");
+        ret = 4;
     }
     return ret;
 }

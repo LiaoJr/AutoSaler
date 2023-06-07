@@ -146,7 +146,7 @@ void RunSaler()
         }
 
         /*如果是在主菜单上滑*/
-        if(ReTouch == 1){
+        if(ReTouch == 1 || ReTouch == 3){
             if(mpage*6<pManager->num){
                 mpage++;
             }
@@ -159,7 +159,7 @@ void RunSaler()
         }
 
         /*如果是在主菜单下滑*/
-        if(ReTouch == 2){
+        if(ReTouch == 2 || ReTouch == 4){
             if(mpage>1){
                 mpage--;
             }
